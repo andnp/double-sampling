@@ -70,20 +70,19 @@ for run in range(runs):
     # tell the collector to start a new run
     collector.reset()
 
-mspbe_data = collector.getStats('mspbe')
 
-import matplotlib.pyplot as plt
-from src.utils.plotting import plot
-fig, ax = plt.subplots(1)
+# import matplotlib.pyplot as plt
+# from src.utils.plotting import plot
+# fig, ax = plt.subplots(1)
 
-plot(ax, mspbe_data)
-ax.set_title('MSPBE')
+# mspbe_data = collector.getStats('mspbe')
+# plot(ax, mspbe_data)
+# ax.set_title('MSPBE')
 
-plt.show()
-sys.exit()
+# plt.show()
+# sys.exit()
 
 # save results to disk
-save_context = exp.buildSaveContext(idx, base="./")
-save_context.ensureExists()
+from PyExpUtils.results.backends.csv import saveResults
 
-np.save(save_context.resolve('mspbe_summary.npy'), mspbe_data)
+saveResults(exp, idx, 'mspbe.csv', collector.all_data['mspbe'])

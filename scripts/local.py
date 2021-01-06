@@ -55,20 +55,19 @@ if __name__ == "__main__":
 
         data = []
 
-        raise NotImplementedError('Make sure to change the expected result file!!')
-        data_path = f'{res_path}/TODO-CHANGE-ME.csv'
+        data_path = f'{res_path}/mspbe.csv'
         if os.path.exists(data_path):
             f = open(data_path, 'r')
             data = f.readlines()
             f.close()
 
-        indices = listIndices(exp, args.runs)
+        indices = listIndices(exp, 1)
         # get all of the indices corresponding to missing results
         indices = generateMissing(exp, indices, data)
         indices = count(path, indices)
 
         for idx in indices:
-            exe = f'{args.executable} {path} {idx}'
+            exe = f'{args.executable} {args.runs} {path} {idx}'
             cmds.append(exe)
 
     print(len(cmds))

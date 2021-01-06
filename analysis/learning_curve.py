@@ -7,7 +7,7 @@ sys.path.append(os.getcwd())
 
 from src.analysis.learning_curve import plotBest
 from src.experiment import ExperimentModel
-from PyExpUtils.results.results import loadResults, whereParameterGreaterEq, whereParameterEquals, find
+from PyExpUtils.results.results import loadResults
 from PyExpUtils.utils.arrays import first
 
 def getBest(results):
@@ -23,28 +23,23 @@ def getBest(results):
 
     return best
 
-def generatePlot(ax, exp_paths, bounds):
+def generatePlot(ax, exp_paths):
     for exp_path in exp_paths:
         exp = ExperimentModel.load(exp_path)
-        raise Exception('Set the name of the results file saved from these experiments')
 
-        results = loadResults(exp, 'results.npy')
-        results = whereParameterEquals(results, 'initial_value', 0)
+        results = loadResults(exp, 'mspbe.csv')
 
         best = getBest(results)
 
-        b = plotBest(best, ax, label='TD', color='yellow', dashed=False)
-        bounds.append(b)
+        plotBest(best, ax, label='TD', color='yellow', dashed=False)
 
 
 if __name__ == "__main__":
     f, axes = plt.subplots(1)
 
-    bounds = []
-
     exp_paths = sys.argv[1:]
 
-    generatePlot(axes, exp_paths, bounds)
+    generatePlot(axes, exp_paths)
 
     plt.show()
     exit()
