@@ -29,3 +29,11 @@ def MSPBE(w: np.ndarray, A: np.ndarray, b: np.ndarray, C: np.ndarray, Cinv: np.n
     dx = np.dot(-A, w) + b
 
     return dx.T.dot(Cinv).dot(dx)
+
+def MSVE(w: np.ndarray, v_star: np.ndarray, X: np.ndarray, db: np.ndarray):
+    v_hat = X.dot(w)
+    err = v_hat - v_star
+    return np.square(err).dot(db)
+
+def computeVStar(P: np.ndarray, R: np.ndarray, gamma: float):
+    return np.linalg.pinv(np.eye(P.shape[0]) - gamma * P).dot(R)

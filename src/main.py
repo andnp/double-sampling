@@ -9,7 +9,7 @@ from src.experiment import ExperimentModel
 from src.utils.rlglue import OffPolicyWrapper
 
 from src.problems.registry import getProblem
-from src.utils.errors import partiallyApplyMSPBE, MSPBE
+from src.utils.errors import MSVE, computeVStar
 from src.utils.Collector import Collector
 
 if len(sys.argv) < 3:
@@ -49,8 +49,7 @@ for run in range(runs):
     R = env.buildAverageReward(pi)
     d = env.getSteadyStateDist(mu)
 
-    # precompute matrices for cheaply computing MSPBE
-    AbC = partiallyApplyMSPBE(X, P, R, d, problem.getGamma())
+    v_star = computeVStar(P, R, problem.getGamma())
 
     glue = RlGlue(agent_wrapper, env)
 
@@ -60,8 +59,8 @@ for run in range(runs):
         # call agent.step and environment.step
         r, o, a, t = glue.step()
 
-        mspbe = MSPBE(agent.theta, *AbC)
-        collector.collect('mspbe', mspbe)
+        msve = MSVE(agent.theta, v_star, X, d)
+        collector.collect('msve', msve)
 
         # if terminal state, then restart the interface
         if t:
@@ -70,19 +69,12 @@ for run in range(runs):
     # tell the collector to start a new run
     collector.reset()
 
-
-# import matplotlib.pyplot as plt
-# from src.utils.plotting import plot
-# fig, ax = plt.subplots(1)
-
-# mspbe_data = collector.getStats('mspbe')
-# plot(ax, mspbe_data)
-# ax.set_title('MSPBE')
-
-# plt.show()
-# sys.exit()
-
 # save results to disk
 from PyExpUtils.results.backends.csv import saveResults
 
-saveResults(exp, idx, 'mspbe.csv', collector.all_data['mspbe'])
+data = collector.all_data['msve']
+
+permutations = exp.numPermutations()
+for run, line in enumerate(data):
+    inner_idx = permutations * run + idx
+    saveResults(exp, inner_idx, 'msve', line)

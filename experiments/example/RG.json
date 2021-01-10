@@ -6,7 +6,7 @@
         "states": 5,
         "behavior": 0.5,
         "target": 0.4,
-        "representation": "dependent",
+        "representation": "tabular",
 
         "alpha": [0.25, 0.125, 0.0625, 0.03125]
     }
